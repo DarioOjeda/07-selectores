@@ -23,7 +23,11 @@ export class SelectorPageComponent implements OnInit {
   //llenar selectores 
   regiones: string[] = [];
   paises: PaisSmall[] = [];
-  fronteras: string[] = [];
+  // fronteras: string[] = [];
+  fronteras: PaisSmall[] = [];
+
+  //UI
+  cargando: boolean = false;
 
 
   constructor( private fb: FormBuilder,
@@ -49,27 +53,35 @@ export class SelectorPageComponent implements OnInit {
           .pipe(
             tap( (_) => {
               this.miFormulario.get('pais')?.reset('');
-              //esto tab resetea la forntera, pues activa, a su vez, el
+              //esto también resetea la frontera, pues activa, a su vez, el
               //el valueChanges de pais del formulario
-
-              this.miFormulario.get('frontera')?.disable();
+              this.cargando = true;
             }),
             switchMap( region => this.paisesService.getPaisesPorRegion( region ))
           )
           .subscribe( paises => {
+            this.cargando = false;
             this.paises = paises;      
           });
 
     this.miFormulario.get('pais')?.valueChanges
           .pipe(
             tap( (_) => {
-              this.fronteras = [];
+              this.cargando = true;
               this.miFormulario.get('frontera')?.reset('');
-              this.miFormulario.get('frontera')?.enable();
             }), 
-            switchMap( codigo => this.paisesService.getPaisPorAlpha(codigo))
-          ).subscribe( pais => {
-            this.fronteras = pais?.borders || [];
+            switchMap( codigo => this.paisesService.getPaisPorAlpha(codigo)),
+            switchMap( pais => {
+                if(pais?.borders.length === 0){
+                  this.cargando = false;
+                }
+                return this.paisesService.getPaisesPorBorders( pais?.borders! );
+              })
+          ).subscribe( paises => {
+            console.log(paises);
+            this.cargando = false;
+            this.fronteras = paises;
+            // this.fronteras = pais?.borders || [];
           });
 
   }
