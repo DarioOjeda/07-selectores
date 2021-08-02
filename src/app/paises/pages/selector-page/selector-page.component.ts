@@ -51,6 +51,8 @@ export class SelectorPageComponent implements OnInit {
               this.miFormulario.get('pais')?.reset('');
               //esto tab resetea la forntera, pues activa, a su vez, el
               //el valueChanges de pais del formulario
+
+              this.miFormulario.get('frontera')?.disable();
             }),
             switchMap( region => this.paisesService.getPaisesPorRegion( region ))
           )
@@ -62,7 +64,8 @@ export class SelectorPageComponent implements OnInit {
           .pipe(
             tap( (_) => {
               this.fronteras = [];
-              this.miFormulario.get('frontera')?.reset('')
+              this.miFormulario.get('frontera')?.reset('');
+              this.miFormulario.get('frontera')?.enable();
             }), 
             switchMap( codigo => this.paisesService.getPaisPorAlpha(codigo))
           ).subscribe( pais => {
