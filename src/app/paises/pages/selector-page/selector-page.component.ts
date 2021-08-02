@@ -22,6 +22,18 @@ export class SelectorPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.regiones = this.paisesService.regiones;
+
+
+    //cuando cambie la region
+    this.miFormulario.get('region')?.valueChanges.
+          subscribe( region => {
+            console.log(region)
+
+            this.paisesService.getPaisesPorRegion( region )
+                    .subscribe( paises => {
+                      
+                    })
+          })
   }
 
   guardar() {
