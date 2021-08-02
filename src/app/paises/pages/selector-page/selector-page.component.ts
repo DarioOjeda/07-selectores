@@ -74,6 +74,7 @@ export class SelectorPageComponent implements OnInit {
             switchMap( pais => {
                 if(pais?.borders.length === 0){
                   this.cargando = false;
+                  this.miFormulario.controls.frontera.setErrors(null);
                 }
                 return this.paisesService.getPaisesPorBorders( pais?.borders! );
               })
